@@ -10,15 +10,25 @@ import fs from 'fs';
 class App {
 	private app: express.Application = server.getServer();
 
-	private key: Buffer = fs.readFileSync(path.normalize('./keys/server.key'));
-	private cert: Buffer = fs.readFileSync(path.normalize('./keys/server.cert'));
-	private serverOptions = { key: this.key, cert: this.cert };
+	public initialize(): void {
+		this.initializeHttpServer();
+		this.initializeHttpsServer();
+	}
 
-	public initializeHttpServer(): void {
+	private initializeHttpServer(): void {
+		this.app.listen(AppConfig.server.port, '0.0.0.0', () => {
+			this.log(`HTTP Server started listening on: ${AppConfig.server.port}`);
+		});
+	}
+
+	private initializeHttpsServer(): void {
+		const key: Buffer = fs.readFileSync(path.normalize('./keys/server.key'));
+		const cert: Buffer = fs.readFileSync(path.normalize('./keys/server.cert'));
+
 		https
-			.createServer(this.serverOptions, this.app)
-			.listen(AppConfig.server.port, '0.0.0.0', () => {
-				this.log(`HTTPS Server started listening on: ${AppConfig.server.port}`);
+			.createServer({ key, cert }, this.app)
+			.listen(AppConfig.server.httpsPort, '0.0.0.0', () => {
+				this.log(`HTTPS Server started listening on: ${AppConfig.server.httpsPort}`);
 			});
 	}
 
@@ -30,4 +40,4 @@ class App {
 
 const app = new App();
 
-app.initializeHttpServer();
+app.initialize();
