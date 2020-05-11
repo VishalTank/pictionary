@@ -11,13 +11,24 @@ class App {
 	private app: express.Application = server.getServer();
 
 	public initialize(): void {
-		this.initializeHttpServer();
-		this.initializeHttpsServer();
+		this.initializeHttpServer()
+			.then(() => { })
+			.catch(err => {
+				console.log(err);
+			});
+
+		//? OPTIONAL
+		// this.initializeHttpsServer();
 	}
 
-	private initializeHttpServer(): void {
-		this.app.listen(AppConfig.server.port, '0.0.0.0', () => {
-			this.log(`HTTP Server started listening on: ${AppConfig.server.port}`);
+	private initializeHttpServer(): Promise<void> {
+
+		return new Promise((resolve, reject) => {
+			this.app
+				.listen(AppConfig.server.port, '0.0.0.0', () => {
+					logger.info(`HTTP Server started listening on: ${AppConfig.server.port}`);
+					return resolve();
+				});
 		});
 	}
 
@@ -33,7 +44,7 @@ class App {
 	}
 
 	private log(message: string): void {
-		console.log(message);
+		// console.log(message);
 		logger.info(message);
 	}
 }

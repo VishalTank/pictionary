@@ -3,7 +3,7 @@ import winston, { createLogger, format, transports } from 'winston';
 const level = process.env.LOG_LEVEL;
 
 const logFormat = format.printf(({ level, message, timestamp }) => {
-	return `[${timestamp}] ${level}: ${message}`;
+	return `[${timestamp}] [${level}]: ${message}`;
 });
 
 const formatOptions = format.combine(
@@ -11,21 +11,28 @@ const formatOptions = format.combine(
 	logFormat
 );
 
-const fileOptions = {
-	level: 'info',
-	filename: `./logs/app.log`,
-	handleExceptions: true,
-	maxsize: 5000000,
-	maxFiles: 1,
-	colorize: false
+const options = {
+	console: {
+		level: 'debug',
+		handleExceptions: true,
+		json: true,
+		colorize: true
+	},
+	file: {
+		level,
+		filename: `./logs/app.log`,
+		handleExceptions: true,
+		maxsize: 5000000,
+		maxFiles: 1,
+		colorize: false
+	}
 };
 
 export const logger: winston.Logger = createLogger({
-	level,
 	format: formatOptions,
 	transports: [
-		new transports.Console(),
-		new transports.File(fileOptions)
+		new transports.Console(options.console),
+		new transports.File(options.file),
 	]
 });
 

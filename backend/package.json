@@ -7,7 +7,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "eslint . --ext .ts",
 		"lint-and-fix": "eslint . --ext .ts --fix",
-		"start": "nodemon exec"
+		"start": "nodemon exec",
+		"build": "tsc && node ./out/index.js"
 	},
 	"keywords": [],
 	"author": "",
