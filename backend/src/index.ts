@@ -39,14 +39,21 @@ class App {
 		return new Promise((resolve, reject) => {
 			this.io = socketIO(this.httpServer);
 
+			// When a user connects
 			this.io.on('connection', (socket) => {
-				this.log('A user has connected to the socket!');
 
-				socket.on('message', (message) => {
+				socket.emit('message', 'Welcome to this chat');
+
+				// Broadcast to other users
+				socket.broadcast.emit('message', 'A User joined this chat');
+
+				socket.on('chatMessage', (message: string) => {
 					this.io.emit('message', message);
 				});
 
+				// When a user disconnects
 				socket.on('disconnect', () => {
+					this.io.emit('message', 'A User has left the chat');
 					this.log('A user was disconnected from the socket.');
 				});
 			});
