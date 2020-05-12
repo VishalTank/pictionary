@@ -3,6 +3,7 @@ export const AppConfig = {
 	server: {
 		port: parseInt(process.env.PORT) || 3000,
 		httpsPort: parseInt(process.env.HTTPS_PORT) || 8080,
+		host: process.env.HOST || '0.0.0.0',
 		logLevel: process.env.LOG_LEVEL || 'info'
 	}
 };
