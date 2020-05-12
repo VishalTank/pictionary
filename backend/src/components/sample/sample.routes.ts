@@ -4,6 +4,10 @@ import { sampleDatabaseOperations } from './sample.db';
 
 const router: Router = Router();
 
+router.get('/', (req: Request, res: Response) => {
+	res.json({ hello: 'Hello to you too!' }).status(200);
+})
+
 router.get('/getData/:input', (req: Request, res: Response) => {
 
 	sampleDatabaseOperations.sampleDbFunction(req.params.input)

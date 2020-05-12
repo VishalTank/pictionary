@@ -10,24 +10,45 @@ import fs from 'fs';
 class App {
 	private app: express.Application = server.getServer();
 
-	private key: Buffer = fs.readFileSync(path.normalize('./keys/server.key'));
-	private cert: Buffer = fs.readFileSync(path.normalize('./keys/server.cert'));
-	private serverOptions = { key: this.key, cert: this.cert };
+	public initialize(): void {
+		this.initializeHttpServer()
+			.then(() => { })
+			.catch(err => {
+				console.log(err);
+			});
 
-	public initializeHttpServer(): void {
+		//? OPTIONAL
+		// this.initializeHttpsServer();
+	}
+
+	private initializeHttpServer(): Promise<void> {
+
+		return new Promise((resolve, reject) => {
+			this.app
+				.listen(AppConfig.server.port, '0.0.0.0', () => {
+					logger.info(`HTTP Server started listening on: ${AppConfig.server.port}`);
+					return resolve();
+				});
+		});
+	}
+
+	private initializeHttpsServer(): void {
+		const key: Buffer = fs.readFileSync(path.normalize('./keys/server.key'));
+		const cert: Buffer = fs.readFileSync(path.normalize('./keys/server.cert'));
+
 		https
-			.createServer(this.serverOptions, this.app)
-			.listen(AppConfig.server.port, '0.0.0.0', () => {
-				this.log(`HTTPS Server started listening on: ${AppConfig.server.port}`);
+			.createServer({ key, cert }, this.app)
+			.listen(AppConfig.server.httpsPort, '0.0.0.0', () => {
+				this.log(`HTTPS Server started listening on: ${AppConfig.server.httpsPort}`);
 			});
 	}
 
 	private log(message: string): void {
-		console.log(message);
+		// console.log(message);
 		logger.info(message);
 	}
 }
 
 const app = new App();
 
-app.initializeHttpServer();
+app.initialize();
