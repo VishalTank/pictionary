@@ -13,6 +13,5 @@ export const handleCors = (router: Router): void => {
 };
 
 export const handleHTTPLogs = (router: Router): void => {
-	router.use(morgan('dev'));
 	router.use(morgan('dev', { stream }));
 }
