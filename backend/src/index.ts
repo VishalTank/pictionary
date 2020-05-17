@@ -1,9 +1,12 @@
 require('dotenv').config();
+import 'reflect-metadata';
 import express from 'express';
 import http from 'http';
 import https from 'https';
 import path from 'path';
 import socketIO from 'socket.io';
+import { createConnection, ConnectionOptions } from 'typeorm';
+
 import { server } from './server';
 import { AppConfig } from './utils/app.config';
 import { logger } from './services/app.logger';
@@ -17,9 +20,10 @@ class App {
 	public initialize(): void {
 		this.initializeHttpServer()
 			.then(() => this.initializeSocketIOServer())
-			.catch(err => console.log(err));
+			.then(() => this.initializeDatabaseServer())
+			.catch(err => this.log(err));
 
-		//? OPTIONAL
+		// OPTIONAL
 		// this.initializeHttpsServer();
 	}
 
@@ -54,10 +58,40 @@ class App {
 				// When a user disconnects
 				socket.on('disconnect', () => {
 					this.io.emit('message', 'A User has left the chat');
-					this.log('A user was disconnected from the socket.');
+					this.log('A user was disconnected from the socket');
 				});
 			});
 			resolve();
+		});
+	}
+
+	private initializeDatabaseServer(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const { database_name, username, password, host, port } = AppConfig.db;
+
+			const connectionOptions: ConnectionOptions = {
+				type: "postgres",
+				host,
+				port: port as number,
+				username,
+				password,
+				database: database_name,
+				entities: [
+					path.join(__dirname, 'models', '*.model.ts')
+				],
+				synchronize: true,
+				logging: false
+			};
+
+			createConnection(connectionOptions)
+				.then(connection => {
+					this.log('Database connection successful');
+					resolve();
+				})
+				.catch(err => {
+					this.log('Can not connect to database');
+					reject(err);
+				})
 		});
 	}
 

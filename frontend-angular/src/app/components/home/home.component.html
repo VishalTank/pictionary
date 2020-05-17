@@ -1,0 +1,40 @@
+<div class="container py-5">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-6 mx-auto">
+					<div class="card rounded-0">
+						<div class="card-header">
+							<h3 class="mb-0 text-center">Pictionary</h3>
+						</div>
+						<div class="card-body">
+							<form class="col justify-content-between" [formGroup]="registerForm"
+								(ngSubmit)="submitForm()">
+								<div class="row form-group">
+									<label for="name">Nick Name:</label>
+									<input type="text" class="form-control" id="name" aria-describedby="name"
+										placeholder="Enter Nick Name" formControlName="name" required>
+								</div>
+								<div class="row justify-content-center">
+									<button type="submit" class="col-4 btn btn-primary m-3"
+										[disabled]="registerForm.invalid">Create Room</button>
+									<button type=" submit" class="col-4 btn btn-primary m-3"
+										[disabled]="registerForm.invalid">Join Room</button>
+								</div>
+							</form>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<label for="link">Room Link:</label>
+								<textarea class="textAreaLink" [(ngModel)]="roomLink" readonly></textarea>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>

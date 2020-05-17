@@ -1,8 +1,1 @@
-<input [(ngModel)]="message" (keyup)="$event.keyCode == 13 && sendMessage()" />
-<button (click)="sendMessage()">Send</button>
-<br><br>
-<div>
-	<div *ngFor="let message of messages">
-		{{message}}
-	</div>
-</div>
+<router-outlet></router-outlet>
