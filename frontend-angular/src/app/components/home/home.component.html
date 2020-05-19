@@ -1,6 +1,6 @@
 <div class="container py-5">
-	<div class="row">
-		<div class="col-md-12">
+	<div class="row d-flex">
+		<div class="col-12">
 			<div class="row">
 				<div class="col-6 mx-auto">
 					<div class="card rounded-0">
@@ -12,7 +12,7 @@
 								(ngSubmit)="submitForm()">
 								<div class="row form-group">
 									<label for="name">Nick Name:</label>
-									<input type="text" class="form-control" id="name" aria-describedby="name"
+									<input class="form-control" type="text" id="name" aria-describedby="name"
 										placeholder="Enter Nick Name" formControlName="name" required>
 								</div>
 								<div class="row justify-content-center">
@@ -22,11 +22,15 @@
 										[disabled]="registerForm.invalid">Join Room</button>
 								</div>
 							</form>
-						</div>
-						<div class="card-body">
-							<div class="row">
-								<label for="link">Room Link:</label>
-								<textarea class="textAreaLink" [(ngModel)]="roomLink" readonly></textarea>
+							<div class="row justify-content-around m-3">
+								<label class="d-flex justify-content-center align-items-center col-3 px-0"
+									for="link">Room
+									Link:</label>
+								<input #link class="form-control col-7 text-center" id="link" type="text"
+									placeholder="Copy url" [(ngModel)]="roomLink" readonly>
+								<button [ngClass]="'btn col-1 mx-1 btn-' + copyButtonBorder"
+									(click)="copyToClipboard(link)">
+									<i class="fa fa-copy"></i></button>
 							</div>
 						</div>
 					</div>

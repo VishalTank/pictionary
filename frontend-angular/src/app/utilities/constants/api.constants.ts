@@ -1,5 +1,6 @@
 import { BASE } from './base.constants';
 
 export class API {
-	public static CREATE_ROOM = BASE.API + 'room/create/'
+	public static ROOM = BASE.API + 'room/';
+	public static CREATE_ROOM = BASE.API + 'room/create/';
 }

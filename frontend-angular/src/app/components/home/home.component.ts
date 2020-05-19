@@ -2,6 +2,8 @@ import { HomeService } from './home.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
+import { API } from '../../utilities/constants/api.constants';
+
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.component.html',
@@ -11,6 +13,7 @@ export class HomeComponent implements OnInit {
 
 	registerForm: FormGroup;
 	roomLink: string = '';
+	copyButtonBorder: string = 'secondary';
 
 	constructor(private homeService: HomeService) {
 		this.generateForm();
@@ -25,12 +28,12 @@ export class HomeComponent implements OnInit {
 		});
 	}
 
-	submitForm() {
+	submitForm(): void {
 		console.log('FORM VALUE:', this.registerForm.value);
 		this.homeService.createRoom(this.registerForm.controls.name.value)
 			.subscribe(response => {
-				console.log('SUCCESS!!!!!!!!!!', response);
-				this.roomLink = response.room_id;
+				this.roomLink = API.ROOM + response.room_id;
+				this.copyButtonBorder = 'secondary';
 			}, err => {
 				console.log(err);
 			})
@@ -38,5 +41,18 @@ export class HomeComponent implements OnInit {
 
 	get f() {
 		return this.registerForm.controls;
+	}
+
+	copyToClipboard(inputElement): void {
+		inputElement.select();
+		navigator.clipboard.writeText(this.roomLink)
+			.then(() => {
+				console.log('copied to clipboard');
+				this.copyButtonBorder = 'success';
+			})
+			.catch(err => {
+				console.log(err);
+				this.copyButtonBorder = 'danger';
+			})
 	}
 }
