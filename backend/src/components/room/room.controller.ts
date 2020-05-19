@@ -11,11 +11,13 @@ export class RoomController {
 		console.log('REQBODY:', req.body);
 		let room: Room = new Room();
 
-		req.body['room_id'] = generateRandomRoomId(8);
-		req.body['members'] = [];
-		req.body.members.push(req.body.name);
+		room.room_id = generateRandomRoomId(8);
+		room.members = [];
+		room.members.push(req.body.name);
 
-		Object.assign(room, req.body as Room)
+		console.log(room);
+
+		Object.assign(room, req.body);
 
 		room.save()
 			.then(savedData => {
