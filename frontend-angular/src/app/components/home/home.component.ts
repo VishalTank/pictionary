@@ -1,8 +1,9 @@
-import { HomeService } from './home.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { API } from '../../utilities/constants/api.constants';
+import { HomeService } from './home.service';
 
 @Component({
 	selector: 'app-home',
@@ -15,7 +16,7 @@ export class HomeComponent implements OnInit {
 	roomLink: string = '';
 	copyButtonBorder: string = 'secondary';
 
-	constructor(private homeService: HomeService) {
+	constructor(private router: Router, private homeService: HomeService) {
 		this.generateForm();
 	}
 
@@ -34,6 +35,7 @@ export class HomeComponent implements OnInit {
 			.subscribe(response => {
 				this.roomLink = API.ROOM + response.room_id;
 				this.copyButtonBorder = 'secondary';
+				this.router.navigate(['/room', response.room_id]);
 			}, err => {
 				console.log(err);
 			})

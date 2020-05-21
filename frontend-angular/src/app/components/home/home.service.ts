@@ -11,7 +11,6 @@ export class HomeService {
 	constructor(private http: HttpClient) { }
 
 	createRoom(name): Observable<any> {
-		console.log('NAME:', name);
 		return this.http.post(API.CREATE_ROOM, { name });
 	}
 }

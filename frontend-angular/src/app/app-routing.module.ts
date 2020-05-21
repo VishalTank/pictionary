@@ -14,6 +14,10 @@ const routes: Routes = [
 		component: PageNotFoundComponent
 	},
 	{
+		path: 'room',
+		loadChildren: () => import('./modules/room/room.module').then(m => m.RoomModule)
+	},
+	{
 		path: '',
 		pathMatch: 'full',
 		redirectTo: 'home'
