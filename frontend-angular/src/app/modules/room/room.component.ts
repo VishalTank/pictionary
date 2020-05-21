@@ -8,13 +8,13 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class RoomComponent implements OnInit, OnDestroy {
 
-	private id: string;
+	private room_id: string;
 
 	constructor(private route: ActivatedRoute) { }
 
 	ngOnInit(): void {
 		this.route.params.subscribe(params => {
-			this.id = params['roomLink'];
+			this.room_id = params['roomLink'];
 		});
 	}
 
