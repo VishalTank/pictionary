@@ -31,7 +31,12 @@ export class HomeComponent implements OnInit {
 	}
 
 	submitForm(): void {
-		this.homeService.createRoom(this.registerForm.controls.name.value)
+		const reqBody = {
+			name: this.registerForm.controls.name.value,
+			isAdmin: true
+		};
+
+		this.homeService.createRoom(reqBody)
 			.subscribe(response => {
 				this.router.navigate(['/room', response.room_id]);
 			}, err => {
