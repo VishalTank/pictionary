@@ -6,11 +6,11 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
 	providedIn: 'root'
 })
-export class HomeService {
+export class RoomService {
 
 	constructor(private http: HttpClient) { }
 
-	createRoom(reqBody): Observable<any> {
-		return this.http.post(API.CREATE_ROOM, reqBody);
+	getRoomDetails(room_id: string): Observable<any> {
+		return this.http.get(API.GET_ROOM + room_id);
 	}
 }

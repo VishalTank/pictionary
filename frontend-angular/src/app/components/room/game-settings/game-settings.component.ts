@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+
 import { CopyService } from '../../../services/shared/copy.service';
+import { UI } from './../../../utilities/constants/ui.constants';
 
 @Component({
 	selector: 'app-game-settings',
@@ -9,7 +10,8 @@ import { CopyService } from '../../../services/shared/copy.service';
 })
 export class GameSettingsComponent implements OnInit {
 
-	roomLink: string = '';
+	@Input() room_id: string;
+	roomLink: string = null;
 	copyButtonBorder: string = 'secondary';
 
 	constructor(
@@ -17,6 +19,7 @@ export class GameSettingsComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
+		this.roomLink = UI.ROOM + this.room_id;
 	}
 
 	copyToClipboard(inputElement): void {
