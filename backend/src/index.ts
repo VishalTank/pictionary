@@ -4,13 +4,14 @@ import express from 'express';
 import http from 'http';
 import https from 'https';
 import path from 'path';
+import fs from 'fs';
 import socketIO from 'socket.io';
 import { createConnection, ConnectionOptions } from 'typeorm';
 
 import { server } from './server';
 import { AppConfig } from './utils/app.config';
 import { logger } from './services/app.logger';
-import fs from 'fs';
+import { SocketHandler } from './components/socket/socketHandler';
 
 class App {
 	private app: express.Application = server.getServer();
@@ -40,32 +41,22 @@ class App {
 	}
 
 	private initializeSocketIOServer(): Promise<void> {
+
 		return new Promise((resolve, reject) => {
-			this.io = socketIO(this.httpServer);
-
-			// When a user connects
-			this.io.on('connection', (socket) => {
-
-				socket.emit('message', 'Welcome to this chat');
-
-				// Broadcast to other users
-				socket.broadcast.emit('message', 'A User joined this chat');
-
-				socket.on('chatMessage', (message: string) => {
-					this.io.emit('message', message);
+			SocketHandler.createServer(this.httpServer)
+				.then(() => {
+					this.log('Socket server created successfully');
+					resolve();
+				})
+				.catch(err => {
+					this.log('Can not create Socket server');
+					reject(err);
 				});
-
-				// When a user disconnects
-				socket.on('disconnect', () => {
-					this.io.emit('message', 'A User has left the chat');
-					this.log('A user was disconnected from the socket');
-				});
-			});
-			resolve();
 		});
 	}
 
 	private initializeDatabaseServer(): Promise<void> {
+
 		return new Promise((resolve, reject) => {
 			const { database_name, username, password, host, port } = AppConfig.db;
 

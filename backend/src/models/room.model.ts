@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn, BaseEntity, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn, BaseEntity, Unique, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+
+import { User } from './user.model';
 
 @Entity()
 export class Room extends BaseEntity {
@@ -9,8 +11,8 @@ export class Room extends BaseEntity {
 	@Column({ unique: true })
 	room_id: string;
 
-	@Column('text', { array: true })
-	members: string[];
+	@OneToMany(() => User, user => user.memberIn, { eager: true })
+	members: User[];
 
 	@Column('text', { array: true, nullable: true })
 	chat: string[];

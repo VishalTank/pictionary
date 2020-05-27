@@ -1,12 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToMany, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+
+import { Room } from './room.model';
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
 
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
+	@Column({ unique: true })
 	name: string;
 
 	@Column({ nullable: true })
@@ -14,6 +16,13 @@ export class User {
 
 	@Column({ nullable: true })
 	password: string;
+
+	@Column({ default: false })
+	isAdmin: boolean;
+
+	@ManyToOne(() => Room, room => room.members)
+	@JoinColumn({ name: 'room_id' })
+	memberIn: Room;
 
 	@CreateDateColumn({ type: 'timestamp' })
 	createdAt: Date;
@@ -27,6 +36,8 @@ export interface IUser {
 	name: string;
 	email?: string;
 	password?: string;
+	isAdmin?: boolean;
+	memberIn?: Room;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
