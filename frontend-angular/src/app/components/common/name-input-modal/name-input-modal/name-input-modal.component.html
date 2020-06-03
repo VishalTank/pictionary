@@ -1,0 +1,16 @@
+<div class="modal-header">
+	<h4 class="modal-title">Modal Title</h4>
+	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+	</button>
+</div>
+<div class="modal-body">
+	<form [formGroup]="nameInputForm" (submit)="submitForm()">
+		<label for="nameInput">Nick Name:</label>
+		<input class="form-control" formControlName="name" type="text" required>
+	</form>
+</div>
+<div class="modal-footer">
+	<button (click)="activeModal.dismiss('Close clicked')">
+		Close Clicked
+	</button>
+</div>
