@@ -1,12 +1,11 @@
 require('dotenv').config();
-import 'reflect-metadata';
 import express from 'express';
 import http from 'http';
 import https from 'https';
 import path from 'path';
 import fs from 'fs';
 import socketIO from 'socket.io';
-import { createConnection, ConnectionOptions } from 'typeorm';
+import mongoose from 'mongoose';
 
 import { server } from './server';
 import { AppConfig } from './utils/app.config';
@@ -22,7 +21,7 @@ class App {
 		this.initializeHttpServer()
 			.then(() => this.initializeSocketIOServer())
 			.then(() => this.initializeDatabaseServer())
-			.catch(err => this.log(err));
+			.catch(err => logger.error(err));
 
 		// OPTIONAL
 		// this.initializeHttpsServer();
@@ -34,7 +33,7 @@ class App {
 			this.httpServer = http.createServer(this.app);
 
 			this.httpServer.listen(AppConfig.server.port, AppConfig.server.host, () => {
-				this.log(`HTTP Server started listening on: ${AppConfig.server.port}`);
+				logger.info(`HTTP Server started listening on: ${AppConfig.server.port}`);
 				resolve();
 			});
 		});
@@ -45,11 +44,11 @@ class App {
 		return new Promise((resolve, reject) => {
 			SocketHandler.createServer(this.httpServer)
 				.then(() => {
-					this.log('Socket server created successfully');
+					logger.info('Socket server started successfully');
 					resolve();
 				})
 				.catch(err => {
-					this.log('Can not create Socket server');
+					logger.error('Can not create Socket Server');
 					reject(err);
 				});
 		});
@@ -58,31 +57,23 @@ class App {
 	private initializeDatabaseServer(): Promise<void> {
 
 		return new Promise((resolve, reject) => {
-			const { database_name, username, password, host, port } = AppConfig.db;
+			const { name, host, port, type } = AppConfig.db;
+			const dbUrl: string = `${type}://${host}:${port}/${name}`;
 
-			const connectionOptions: ConnectionOptions = {
-				type: "postgres",
-				host,
-				port: port as number,
-				username,
-				password,
-				database: database_name,
-				entities: [
-					path.join(__dirname, 'models', '*.model.ts')
-				],
-				synchronize: true,
-				logging: false
-			};
-
-			createConnection(connectionOptions)
-				.then(connection => {
-					this.log('Database connection successful');
+			mongoose.connect(dbUrl, {
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+				useCreateIndex: true,
+				useFindAndModify: false
+			})
+				.then(() => {
+					logger.info(`Database connection successful on port: ${port}`);
 					resolve();
 				})
 				.catch(err => {
-					this.log('Can not connect to database');
+					logger.error('Can not connect to database');
 					reject(err);
-				})
+				});
 		});
 	}
 
@@ -93,13 +84,8 @@ class App {
 		https
 			.createServer({ key, cert }, this.app)
 			.listen(AppConfig.server.httpsPort, '0.0.0.0', () => {
-				this.log(`HTTPS Server started listening on: ${AppConfig.server.httpsPort}`);
+				logger.info(`HTTPS Server started listening on: ${AppConfig.server.httpsPort}`);
 			});
-	}
-
-	private log(message: string): void {
-		// console.log(message);
-		logger.info(message);
 	}
 }
 

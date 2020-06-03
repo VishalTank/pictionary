@@ -1,34 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn, BaseEntity, Unique, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Document, Schema, model } from 'mongoose';
 
-import { User } from './user.model';
+import { IUser } from './user.model';
 
-@Entity()
-export class Room extends BaseEntity {
+const roomSchema = new Schema({
+	room_id: {
+		type: Schema.Types.String,
+		required: true,
+		unique: true
+	},
+	members: [{
+		type: Schema.Types.ObjectId,
+		ref: 'User',
+		unique: true
+	}]
+});
 
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column({ unique: true })
+export interface IRoom extends Document {
 	room_id: string;
-
-	@OneToMany(() => User, user => user.memberIn, { eager: true })
-	members: User[];
-
-	@Column('text', { array: true, nullable: true })
-	chat: string[];
-
-	@CreateDateColumn({ type: 'timestamp' })
-	createdAt: Date;
-
-	@UpdateDateColumn({ type: 'timestamp' })
-	updatedAt: Date;
+	members: IUser[];
 }
 
-export interface IRoom {
-	id: number;
-	room_id: string;
-	members: string[];
-	chat?: string[];
-	createdAt?: Date;
-	updatedAt?: Date;
-}
+export default model<IRoom>('Room', roomSchema);

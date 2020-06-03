@@ -14,6 +14,7 @@ class RoomRoutes {
 	registerMethods(): void {
 		this.router.post('/create', this.roomController.createRoom);
 		this.router.get('/get/:room_id', this.roomController.getRoom);
+		this.router.post('/add_user/:room_id', this.roomController.createUserAndAddToRoom);
 	}
 }
 

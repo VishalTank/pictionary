@@ -1,43 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToMany, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Document, Schema, model } from 'mongoose';
 
-import { Room } from './room.model';
+const userSchema = new Schema({
+	name: {
+		type: Schema.Types.String,
+		required: true,
+		unique: true
+	},
+	email: {
+		type: Schema.Types.String
+	},
+	password: {
+		type: Schema.Types.String
+	},
+	isAdmin: {
+		type: Schema.Types.Boolean,
+		default: false
+	}
+}, { timestamps: true }
+);
 
-@Entity()
-export class User extends BaseEntity {
-
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column({ unique: true })
-	name: string;
-
-	@Column({ nullable: true })
-	email: string;
-
-	@Column({ nullable: true })
-	password: string;
-
-	@Column({ default: false })
-	isAdmin: boolean;
-
-	@ManyToOne(() => Room, room => room.members)
-	@JoinColumn({ name: 'room_id' })
-	memberIn: Room;
-
-	@CreateDateColumn({ type: 'timestamp' })
-	createdAt: Date;
-
-	@UpdateDateColumn({ type: 'timestamp' })
-	updatedAt: Date;
-}
-
-export interface IUser {
-	id?: number;
+export interface IUser extends Document {
 	name: string;
 	email?: string;
 	password?: string;
-	isAdmin?: boolean;
-	memberIn?: Room;
-	createdAt?: Date;
-	updatedAt?: Date;
+	isAdmin: boolean;
 }
+
+export default model<IUser>('User', userSchema);
