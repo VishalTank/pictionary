@@ -42,7 +42,7 @@ class App {
 	private initializeSocketIOServer(): Promise<void> {
 
 		return new Promise((resolve, reject) => {
-			SocketHandler.createServer(this.httpServer)
+			new SocketHandler().createServer(this.httpServer)
 				.then(() => {
 					logger.info('Socket server started successfully');
 					resolve();
