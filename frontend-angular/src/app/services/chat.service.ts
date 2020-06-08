@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { IMessage } from './../models/message';
+import { Info, Chat } from './../utilities/constants/socket.events';
 
 @Injectable({
 	providedIn: 'root'
@@ -20,18 +21,18 @@ export class ChatService {
 		this.socket = io(environment.SOCKET_ENDPOINT);
 	}
 
-	setChatMessage(message: string): void {
-		this.socket.emit('chat-message', message.toString());
+	sendChatMessage(message: IMessage): void {
+		this.socket.emit(Chat, message);
 	}
 
 	getMessages(): Observable<any> {
 
 		return Observable.create(observer => {
-			this.socket.on('chat-message', (message: IMessage) => {
+			this.socket.on(Chat, (message: IMessage) => {
 				observer.next(message);
 			});
 
-			this.socket.on('info-message', (message: IMessage) => {
+			this.socket.on(Info, (message: IMessage) => {
 				observer.next(message);
 			});
 		});

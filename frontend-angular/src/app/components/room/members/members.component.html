@@ -1,2 +1,10 @@
 <div class="overflow-auto" id="members">
+	<div *ngFor="let member of members">
+		<div *ngIf="member.isAdmin; else chatMessage">
+			<b>{{member.name}}</b>
+		</div>
+		<ng-template #chatMessage>
+			{{member.name}}
+		</ng-template>
+	</div>
 </div>

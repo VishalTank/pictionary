@@ -17,9 +17,10 @@
 								</div>
 								<div class="row justify-content-center">
 									<button type="submit" class="col-4 btn btn-primary m-3"
-										[disabled]="registerForm.invalid">Create Room</button>
-									<button type=" submit" class="col-4 btn btn-primary m-3"
-										[disabled]="registerForm.invalid">Join Room</button>
+										[disabled]="registerForm.invalid">
+										<span *ngIf="showLoading" class="spinner-grow spinner-grow-sm m-1"></span>
+										Create Room
+									</button>
 								</div>
 							</form>
 						</div>

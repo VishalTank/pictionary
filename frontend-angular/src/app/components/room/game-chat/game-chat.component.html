@@ -1,12 +1,12 @@
 <div>
 	<div *ngFor="let message of messages">
-		<div *ngIf="message?.type === 'info-message'; else chatMessage">
-			<b>INFO: {{message.data}}</b>
+		<div *ngIf="message?.type === Info; else chatMessage">
+			<b>{{message.data}}</b>
 		</div>
 		<ng-template #chatMessage>
 			{{message.data}}
 		</ng-template>
 	</div>
 </div>
-<input [(ngModel)]="msg" (keyup)="$event.keyCode == 13 && setChatMessage()" />
-<button (click)="setChatMessage()">Send</button>
+<input [(ngModel)]="msg" (keyup)="$event.keyCode == 13 && sendChatMessage()" />
+<button (click)="sendChatMessage()">Send</button>

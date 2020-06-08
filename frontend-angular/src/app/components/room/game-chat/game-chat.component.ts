@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ChatService } from './../../../services/chat.service';
 import { IMessage } from '../../../models/message';
+import { Info } from './../../../utilities/constants/socket.events';
 
 @Component({
 	selector: 'app-game-chat',
@@ -12,6 +13,7 @@ export class GameChatComponent implements OnInit {
 
 	msg: string = '';
 	messages: IMessage[] = [];
+	Info: string = Info;
 
 	constructor(private chatService: ChatService) { }
 
@@ -25,8 +27,12 @@ export class GameChatComponent implements OnInit {
 		});
 	}
 
-	setChatMessage(): void {
-		this.chatService.setChatMessage(this.msg);
+	sendChatMessage(): void {
+		const chatMessage: IMessage = {
+			data: this.msg
+		};
+
+		this.chatService.sendChatMessage(chatMessage);
 		this.msg = '';
 	}
 }

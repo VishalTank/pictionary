@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-members',
-  templateUrl: './members.component.html',
-  styleUrls: ['./members.component.scss']
+	selector: 'app-members',
+	templateUrl: './members.component.html',
+	styleUrls: ['./members.component.scss']
 })
 export class MembersComponent implements OnInit {
 
-  constructor() { }
+	@Input() members;
 
-  ngOnInit(): void {
-  }
+	constructor() { }
+
+	ngOnInit(): void {
+	}
 
 }

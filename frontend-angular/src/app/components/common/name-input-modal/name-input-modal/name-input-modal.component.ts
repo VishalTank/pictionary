@@ -4,6 +4,9 @@ import { NgbModal, ModalDismissReasons, NgbModalOptions, NgbActiveModal } from '
 
 import { RoomService } from './../../../../modules/room/room.service';
 import { IUser } from './../../../../models/user';
+import { LocalStorageService } from './../../../../services/shared/localstorage.service';
+import { USER } from './../../../../utilities/constants/localstorage.constants';
+
 
 @Component({
 	selector: 'app-name-input-modal',
@@ -13,11 +16,13 @@ import { IUser } from './../../../../models/user';
 export class NameInputModalComponent {
 
 	@Input() room_id: string;
+	showLoading: boolean = false;
 	nameInputForm: FormGroup;
 
 	constructor(
 		private activeModal: NgbActiveModal,
-		private roomService: RoomService
+		private roomService: RoomService,
+		private localStorageService: LocalStorageService
 	) {
 		this.createNameInputForm();
 	}
@@ -29,15 +34,19 @@ export class NameInputModalComponent {
 	}
 
 	submitForm(): void {
-		this.activeModal.close(this.nameInputForm.value);
 
+		this.showLoading = true;
 		const user: IUser = {
 			name: this.nameInputForm.controls.name.value
 		};
 
 		this.roomService.createUserAndAddToRoom(this.room_id, user)
 			.subscribe(() => {
-				console.log('SUBMITTED');
+				this.showLoading = false;
+				this.localStorageService.set(USER, user);
+
+				if (this.localStorageService.get(USER))
+					this.activeModal.close(this.nameInputForm.value);
 			});
 	}
 }

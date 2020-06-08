@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { HomeService } from './home.service';
+import { LocalStorageService } from './../../services/shared/localstorage.service';
+import { USER } from './../../utilities/constants/localstorage.constants';
 
 @Component({
 	selector: 'app-home',
@@ -11,11 +13,13 @@ import { HomeService } from './home.service';
 })
 export class HomeComponent implements OnInit {
 
+	showLoading: boolean = false;
 	registerForm: FormGroup;
 
 	constructor(
 		private router: Router,
-		private homeService: HomeService
+		private homeService: HomeService,
+		private localStorageService: LocalStorageService
 	) {
 		this.generateForm();
 	}
@@ -30,6 +34,7 @@ export class HomeComponent implements OnInit {
 	}
 
 	submitForm(): void {
+		this.showLoading = true;
 		const reqBody = {
 			name: this.registerForm.controls.name.value,
 			isAdmin: true
@@ -37,7 +42,11 @@ export class HomeComponent implements OnInit {
 
 		this.homeService.createRoom(reqBody)
 			.subscribe(response => {
-				this.router.navigate(['/room', response.room_id]);
+				this.showLoading = false;
+				this.localStorageService.set(USER, reqBody);
+
+				if (this.localStorageService.get(USER))
+					this.router.navigate(['/room', response.room_id]);
 			}, err => {
 				console.log(err);
 			})
