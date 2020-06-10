@@ -43,8 +43,11 @@ export class HomeComponent implements OnInit {
 		this.homeService.createRoom(reqBody)
 			.subscribe(response => {
 				this.showLoading = false;
+
+				// Set username to localstorage
 				this.localStorageService.set(USER, reqBody);
 
+				// Redirect only if username is successfully stored on localstorage
 				if (this.localStorageService.get(USER))
 					this.router.navigate(['/room', response.room_id]);
 			}, err => {

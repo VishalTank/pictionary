@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChange, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -7,6 +7,7 @@ import { NameInputModalComponent } from './../../components/common/name-input-mo
 import { LocalStorageService } from './../../services/shared/localstorage.service';
 import { USER } from './../../utilities/constants/localstorage.constants';
 import { IUser } from './../../models/user';
+import { IRoom } from './../../models/room';
 
 @Component({
 	selector: 'app-room',
@@ -16,20 +17,24 @@ import { IUser } from './../../models/user';
 export class RoomComponent implements OnInit {
 
 	room_id: string;
-	members: IUser[];
+	roomData: IRoom;
+	showLoading: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,
 		private roomService: RoomService,
 		private modalService: NgbModal,
-		private localStorageService: LocalStorageService
+		private localStorageService: LocalStorageService,
+		private ref: ChangeDetectorRef
 	) { }
 
 	ngOnInit(): void {
+		this.showLoading = true;
 		this.route.params.subscribe(params => {
 			this.room_id = params['id'];
 			this.getRoomDetails(this.room_id);
 
+			// Open name form if localstorage does not contain username
 			if (!this.localStorageService.get(USER))
 				this.openNameInputModal();
 		});
@@ -38,8 +43,9 @@ export class RoomComponent implements OnInit {
 	private getRoomDetails(room_id: string): void {
 		this.roomService.getRoomDetails(room_id)
 			.subscribe(roomData => {
-				console.log('roomData:', roomData);
-				this.members = roomData.members;
+				this.showLoading = false;
+				this.roomData = roomData;
+				this.ref.markForCheck();
 			});
 	}
 

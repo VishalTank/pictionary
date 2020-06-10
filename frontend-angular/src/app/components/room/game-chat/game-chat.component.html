@@ -4,7 +4,7 @@
 			<b>{{message.data}}</b>
 		</div>
 		<ng-template #chatMessage>
-			{{message.data}}
+			{{message?.author?.name}}: {{message.data}}
 		</ng-template>
 	</div>
 </div>

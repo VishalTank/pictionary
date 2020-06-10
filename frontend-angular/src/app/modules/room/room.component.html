@@ -4,14 +4,28 @@
 			ROOM
 		</div>
 		<div class="card-body row m-0 p-0">
-			<div class="col-md-2 border">
-				<app-members [members]="members"></app-members>
+			<div class="d-flex col-md-2 border">
+				<div *ngIf="roomData; else membersLoading;">
+					<app-members [roomData]="roomData"></app-members>
+				</div>
+				<ng-template #membersLoading>
+					<div class="d-flex m-auto spinner-grow spinner-grow-md text-primary" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</ng-template>
 			</div>
 			<div class="col-md-7 border">
 				<app-game-settings [room_id]="room_id"></app-game-settings>
 			</div>
-			<div class="col-md-3 border">
-				<app-game-chat></app-game-chat>
+			<div class="d-flex col-md-3 border">
+				<div *ngIf="roomData; else gameChatLoading;">
+					<app-game-chat [roomData]="roomData"></app-game-chat>
+				</div>
+				<ng-template #gameChatLoading>
+					<div class="d-flex m-auto spinner-grow spinner-grow-md text-primary" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</ng-template>
 			</div>
 		</div>
 	</div>

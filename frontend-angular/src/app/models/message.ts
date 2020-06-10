@@ -1,4 +1,7 @@
+import { IUser } from './user';
+
 export interface IMessage {
-	type?: string;
+	author: IUser;
 	data: string;
+	type?: string;
 }
