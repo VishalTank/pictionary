@@ -1,10 +1,10 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbModalOptions, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { StorageMap } from '@ngx-pwa/local-storage';
 
 import { RoomService } from './../../../../modules/room/room.service';
 import { IUser } from './../../../../models/user';
-import { LocalStorageService } from './../../../../services/shared/localstorage.service';
 import { USER } from './../../../../utilities/constants/localstorage.constants';
 
 
@@ -22,7 +22,7 @@ export class NameInputModalComponent {
 	constructor(
 		private activeModal: NgbActiveModal,
 		private roomService: RoomService,
-		private localStorageService: LocalStorageService
+		private storage: StorageMap
 	) {
 		this.createNameInputForm();
 	}
@@ -43,10 +43,14 @@ export class NameInputModalComponent {
 		this.roomService.createUserAndAddToRoom(this.room_id, user)
 			.subscribe(() => {
 				this.showLoading = false;
-				this.localStorageService.set(USER, user);
 
-				if (this.localStorageService.get(USER))
+				this.storage.set(USER, user).subscribe(() => { });
+
+				this.storage.get(USER).subscribe(userData => {
 					this.activeModal.close(this.nameInputForm.value);
+				}, err => {
+					console.log(err);
+				});
 			});
 	}
 }

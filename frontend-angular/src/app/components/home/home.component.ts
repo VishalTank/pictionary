@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { StorageMap } from '@ngx-pwa/local-storage';
 
 import { HomeService } from './home.service';
-import { LocalStorageService } from './../../services/shared/localstorage.service';
 import { USER } from './../../utilities/constants/localstorage.constants';
 
 @Component({
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 	constructor(
 		private router: Router,
 		private homeService: HomeService,
-		private localStorageService: LocalStorageService
+		private storage: StorageMap,
 	) {
 		this.generateForm();
 	}
@@ -45,11 +45,13 @@ export class HomeComponent implements OnInit {
 				this.showLoading = false;
 
 				// Set username to localstorage
-				this.localStorageService.set(USER, reqBody);
+				this.storage.set(USER, reqBody).subscribe(() => { });
 
 				// Redirect only if username is successfully stored on localstorage
-				if (this.localStorageService.get(USER))
-					this.router.navigate(['/room', response.room_id]);
+				this.storage.get(USER).subscribe(userData => {
+					if (userData)
+						this.router.navigate(['/room', response.room_id]);
+				});
 			}, err => {
 				console.log(err);
 			})

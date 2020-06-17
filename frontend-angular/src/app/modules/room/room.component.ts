@@ -1,12 +1,11 @@
 import { Component, OnInit, OnChanges, SimpleChange, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { StorageMap } from '@ngx-pwa/local-storage';
 
 import { RoomService } from './room.service';
 import { NameInputModalComponent } from './../../components/common/name-input-modal/name-input-modal/name-input-modal.component';
-import { LocalStorageService } from './../../services/shared/localstorage.service';
 import { USER } from './../../utilities/constants/localstorage.constants';
-import { IUser } from './../../models/user';
 import { IRoom } from './../../models/room';
 
 @Component({
@@ -24,7 +23,7 @@ export class RoomComponent implements OnInit {
 		private route: ActivatedRoute,
 		private roomService: RoomService,
 		private modalService: NgbModal,
-		private localStorageService: LocalStorageService,
+		private storage: StorageMap,
 		private ref: ChangeDetectorRef
 	) { }
 
@@ -35,8 +34,10 @@ export class RoomComponent implements OnInit {
 			this.getRoomDetails(this.room_id);
 
 			// Open name form if localstorage does not contain username
-			if (!this.localStorageService.get(USER))
-				this.openNameInputModal();
+			this.storage.get(USER).subscribe(userData => {
+				if (!userData)
+					this.openNameInputModal();
+			});
 		});
 	}
 

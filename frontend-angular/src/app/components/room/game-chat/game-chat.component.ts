@@ -1,5 +1,5 @@
-import { LocalStorageService } from './../../../services/shared/localstorage.service';
 import { Component, OnInit, Input } from '@angular/core';
+import { StorageMap } from '@ngx-pwa/local-storage';
 
 import { ChatService } from './../../../services/chat.service';
 import { IMessage } from '../../../models/message';
@@ -23,16 +23,23 @@ export class GameChatComponent implements OnInit {
 
 	constructor(
 		private chatService: ChatService,
-		private localstorageService: LocalStorageService
+		private storage: StorageMap
 	) {
-		this.user = this.localstorageService.get(USER);
 	}
 
 	ngOnInit(): void {
-		this.chatService.connectToRoom(this.user, this.roomData.room_id);
+		this.storage.watch(USER).subscribe(userData => {
+			if (userData) {
+				this.user = userData as IUser;
 
-		this.chatService.getMessages().subscribe((message: IMessage) => {
-			this.messages.push(message);
+				this.chatService.connectToRoom(this.user, this.roomData.room_id);
+
+				this.chatService.getMessages().subscribe((message: IMessage) => {
+					this.messages.push(message);
+				});
+			}
+		}, err => {
+			console.log(err);
 		});
 	}
 
