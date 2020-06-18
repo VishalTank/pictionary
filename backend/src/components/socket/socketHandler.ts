@@ -1,14 +1,13 @@
-import socketIO from 'socket.io';
+import socketIO, { Socket } from 'socket.io';
 import http from 'http';
 
 import { IMessage } from '../../models/message.model';
-import { Connection, Disconnect, Info, Chat, JoinRoom } from './socket.events';
+import { Connection, Disconnect, Info, Chat, JoinRoom, RemoveMember } from './socket.events';
 import { IUser } from './../../models/user.model';
 
 export class SocketHandler {
 	private io: socketIO.Server;
 	private user: IUser;
-	private room_id: string;
 
 	public createServer(httpServer: http.Server): Promise<void> {
 
@@ -29,7 +28,7 @@ export class SocketHandler {
 
 	private handleSocketEvents(): void {
 
-		this.io.on(Connection, (socket) => {
+		this.io.on(Connection, (socket: Socket) => {
 			this.user = JSON.parse(socket.handshake.query.user);
 
 			if (this.user) {
@@ -40,28 +39,27 @@ export class SocketHandler {
 
 				// Chat messages
 				socket.on(Chat, (message: IMessage) => {
-					this.handleChatMessages(message)
+					this.handleChatMessages(socket.handshake.query.room_id, message)
 				});
 
 				// When a user disconnects
 				socket.on(Disconnect, () => {
-					this.handleUserLeft(socket)
+					this.handleUserLeft(socket, socket.handshake.query.room_id)
 				});
 			}
 		});
 	}
 
-	private addUserToRoom = (socket, room_id: string) => {
-		this.room_id = room_id;
+	private addUserToRoom = (socket: Socket, room_id: string) => {
 
 		// Join a room by ID
-		socket.join(this.room_id);
+		socket.join(room_id);
 
 		// When a new user has joined the given room
-		this.handleUserJoined(socket);
+		this.handleUserJoined(socket, room_id);
 	};
 
-	private handleUserJoined = (socket): void => {
+	private handleUserJoined = (socket: Socket, room_id: string): void => {
 
 		// Notify the user that just joined the room
 		const welcomeMessage: IMessage = {
@@ -77,16 +75,16 @@ export class SocketHandler {
 			type: Info,
 			data: `${this.user.name} just hopped in this room!`
 		};
-		socket.broadcast.to(this.room_id).emit(Info, userJoinedMessage);
+		socket.broadcast.to(room_id).emit(Info, userJoinedMessage);
 	};
 
-	private handleChatMessages = (chatMessage: IMessage): void => {
+	private handleChatMessages = (room_id: string, chatMessage: IMessage): void => {
 
 		// Emit all the chat messages
-		this.io.in(this.room_id).emit(Chat, chatMessage);
+		this.io.in(room_id).emit(Chat, chatMessage);
 	};
 
-	private handleUserLeft = (socket): void => {
+	private handleUserLeft = (socket: Socket, room_id: string): void => {
 
 		// Notify users whenever someone leaves the room
 		const user = JSON.parse(socket.handshake.query.user);
@@ -95,6 +93,6 @@ export class SocketHandler {
 			type: Info,
 			data: `${user.name} just left this room :(`
 		};
-		this.io.in(this.room_id).emit(Info, userLeftMessage);
+		this.io.in(room_id).emit(Info, userLeftMessage);
 	};
 }
