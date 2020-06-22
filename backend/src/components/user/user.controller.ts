@@ -2,11 +2,12 @@ import { Request, Response } from "express";
 
 import User, { IUser } from '../../models/user.model';
 import { logger } from './../../services/app.logger';
+import { IUserDocument } from './../../models/user.model';
 
 export class UserController {
 
 	public createUser(req: Request, res: Response) {
-		let user: IUser = new User(req.body);
+		const user: IUserDocument = new User(req.body);
 
 		user.save()
 			.then(savedData => {

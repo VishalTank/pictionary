@@ -1,22 +1,26 @@
 import winston, { createLogger, format, transports } from 'winston';
-
+import chalk from 'chalk';
 const level = process.env.LOG_LEVEL;
 
 const logFormat = format.printf(({ level, message, timestamp }) => {
-	return `[${timestamp}] [${level}]: ${message}`;
+
+	return `[${chalk.blueBright(timestamp)}] [${level}]: ${message}`;
 });
 
-const formatOptions = format.combine(
-	format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-	logFormat
-);
+const fileFormat = format.printf(({ level, message, timestamp }) => {
+	return `[${timestamp}] [${level}]: ${message}`;
+});
 
 const options = {
 	console: {
 		level: 'debug',
 		handleExceptions: true,
 		json: true,
-		colorize: true
+		format: format.combine(
+			format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+			format.colorize(),
+			logFormat
+		)
 	},
 	file: {
 		level,
@@ -24,12 +28,14 @@ const options = {
 		handleExceptions: true,
 		maxsize: 5000000,
 		maxFiles: 1,
-		colorize: false
+		format: format.combine(
+			format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+			fileFormat
+		)
 	}
 };
 
 export const logger: winston.Logger = createLogger({
-	format: formatOptions,
 	transports: [
 		new transports.Console(options.console),
 		new transports.File(options.file),

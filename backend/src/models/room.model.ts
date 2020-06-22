@@ -1,6 +1,6 @@
 import { Document, Schema, model } from 'mongoose';
 
-import { IUser } from './user.model';
+import { IMember } from './member.model';
 
 const roomSchema = new Schema({
 	room_id: {
@@ -9,15 +9,23 @@ const roomSchema = new Schema({
 		unique: true
 	},
 	members: [{
-		type: Schema.Types.ObjectId,
-		ref: 'User',
-		unique: true
+		userInfo: {
+			type: Schema.Types.ObjectId,
+			ref: 'User',
+			unique: true
+		},
+		isAdmin: {
+			type: Schema.Types.Boolean,
+			default: false
+		}
 	}]
 });
 
-export interface IRoom extends Document {
+export interface IRoom {
 	room_id: string;
-	members: IUser[];
+	members: IMember[];
 }
 
-export default model<IRoom>('Room', roomSchema);
+export interface IRoomDocument extends IRoom, Document { }
+
+export default model<IRoomDocument>('Room', roomSchema);

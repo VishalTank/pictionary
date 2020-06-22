@@ -2,8 +2,10 @@ import socketIO, { Socket } from 'socket.io';
 import http from 'http';
 
 import { IMessage } from '../../models/message.model';
-import { Connection, Disconnect, Info, Chat, JoinRoom, RemoveMember } from './socket.events';
+import { Connection, Disconnect, Info, Chat, JoinRoom, RemoveMember, AddMember } from './socket.events';
 import { IUser } from './../../models/user.model';
+import { RoomDbOps } from '../room/room.db';
+import { logger } from './../../services/app.logger';
 
 export class SocketHandler {
 	private io: socketIO.Server;
@@ -61,11 +63,13 @@ export class SocketHandler {
 
 	private handleUserJoined = (socket: Socket, room_id: string): void => {
 
+		const user = JSON.parse(socket.handshake.query.user);
+
 		// Notify the user that just joined the room
 		const welcomeMessage: IMessage = {
 			author: null,
 			type: Info,
-			data: `Hey ${this.user.name}, Welcome to the Chat Room!`
+			data: `Hey ${user.name}, Welcome to the Chat Room!`
 		};
 		socket.emit(Info, welcomeMessage);
 
@@ -73,9 +77,20 @@ export class SocketHandler {
 		const userJoinedMessage: IMessage = {
 			author: null,
 			type: Info,
-			data: `${this.user.name} just hopped in this room!`
+			data: `${user.name} just hopped in this room!`
 		};
 		socket.broadcast.to(room_id).emit(Info, userJoinedMessage);
+
+		// Add user to the room's member array
+		RoomDbOps.addUserToRoom(room_id, user)
+			.then(updatedRoom => {
+				if (updatedRoom) {
+					this.io.in(room_id).emit(AddMember, updatedRoom);
+				}
+			})
+			.catch(err => {
+				logger.error('can not add member to the room:', err);
+			});
 	};
 
 	private handleChatMessages = (room_id: string, chatMessage: IMessage): void => {
@@ -94,5 +109,16 @@ export class SocketHandler {
 			data: `${user.name} just left this room :(`
 		};
 		this.io.in(room_id).emit(Info, userLeftMessage);
+
+		// Remove user from the room's members array (applies to all except room admins)
+		RoomDbOps.removeUserFromRoom(room_id, user)
+			.then(updatedRoom => {
+				if (updatedRoom) {
+					this.io.in(room_id).emit(RemoveMember, updatedRoom);
+				}
+			})
+			.catch(err => {
+				logger.error('can not remove member from the room:', err);
+			});
 	};
 }

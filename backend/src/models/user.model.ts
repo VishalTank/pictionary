@@ -11,19 +11,16 @@ const userSchema = new Schema({
 	},
 	password: {
 		type: Schema.Types.String
-	},
-	isAdmin: {
-		type: Schema.Types.Boolean,
-		default: false
 	}
 }, { timestamps: true }
 );
 
-export interface IUser extends Document {
+export interface IUser {
 	name: string;
 	email?: string;
 	password?: string;
-	isAdmin: boolean;
 }
 
-export default model<IUser>('User', userSchema);
+export interface IUserDocument extends IUser, Document { }
+
+export default model<IUserDocument>('User', userSchema);
