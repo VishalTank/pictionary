@@ -1,11 +1,12 @@
-import { IUser } from './../models/user';
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { IMessage } from './../models/message';
-import { Info, Chat, JoinRoom } from './../utilities/constants/socket.events';
+import { Info, Chat, JoinRoom, RemoveMember } from './../utilities/constants/socket.events';
+import { IRoom } from '../models/room';
+import { IUser } from './../models/user';
 
 @Injectable({
 	providedIn: 'root'
@@ -40,5 +41,20 @@ export class ChatService {
 				observer.next(message);
 			});
 		});
-	};
+	}
+
+	getMembers(): Observable<any> {
+
+		return Observable.create(observer => {
+			if (this.socket) {
+				console.log('asdasdasdasd');
+				this.socket.on(RemoveMember, (updatedRoom: IRoom) => {
+					observer.next(updatedRoom.members);
+				});
+			}
+			else {
+				console.log('socket not created');
+			}
+		})
+	}
 }

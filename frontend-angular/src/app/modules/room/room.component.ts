@@ -28,7 +28,9 @@ export class RoomComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
+		this.preventReload();
 		this.showLoading = true;
+
 		this.route.params.subscribe(params => {
 			this.room_id = params['id'];
 			this.getRoomDetails(this.room_id);
@@ -53,5 +55,12 @@ export class RoomComponent implements OnInit {
 	private openNameInputModal(): void {
 		const modelRef = this.modalService.open(NameInputModalComponent, { keyboard: false, backdrop: 'static' });
 		modelRef.componentInstance.room_id = this.room_id;
+	}
+
+	private preventReload(): void {
+		window.addEventListener("beforeunload", function (e) {
+			var confirmationMessage = "\o/";
+			e.returnValue = confirmationMessage;
+		});
 	}
 }

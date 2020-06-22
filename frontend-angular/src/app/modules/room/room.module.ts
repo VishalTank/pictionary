@@ -15,7 +15,8 @@ import { NameInputModalComponent } from '../../components/common/name-input-moda
 @NgModule({
 	declarations: [
 		RoomComponent,
-		NameInputModalComponent,],
+		NameInputModalComponent
+	],
 	imports: [
 		CommonModule,
 		NgbModalModule,
