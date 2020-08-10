@@ -13,8 +13,8 @@ class RoomRoutes {
 
 	registerMethods(): void {
 		this.router.post('/create', this.roomController.createRoom);
-		this.router.get('/get/:room_id', this.roomController.getRoom);
-		this.router.post('/add_user/:room_id', this.roomController.addUserToRoom);
+		this.router.get('/get/:roomId', this.roomController.getRoom);
+		this.router.post('/add_user/:roomId', this.roomController.addUserToRoom);
 	}
 }
 

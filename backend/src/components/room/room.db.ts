@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
 import User, { IUser, IUserDocument } from './../../models/user.model';
-import Room, { IRoom, IRoomDocument } from '../../models/room.model';
+import Room, { IRoom } from '../../models/room.model';
 import { logger } from './../../services/app.logger';
 
 export class RoomDbOps {
 
-	public static addUserToRoom(room_id: string, user: IUser) {
+	public static addUserToRoom(roomId: string, user: IUser): Promise<IRoom> {
 		let conditionalUpdate = null;
 		let query = null;
 
@@ -15,14 +15,14 @@ export class RoomDbOps {
 				const existingUser: IUserDocument = await User.findOne({ name: user.name });
 
 				if (existingUser) {
-					query = { room_id, 'members.userInfo': { $ne: existingUser._id } };
+					query = { roomId, 'members.userInfo': { $ne: existingUser._id } };
 					conditionalUpdate = { $addToSet: { members: { userInfo: new mongoose.Types.ObjectId(existingUser._id) } } };
 
 					logger.info('Found an existing user to be added to the room.');
 				}
 				else {
 					const newUser: IUserDocument = await new User(user).save();
-					query = { room_id, 'members.userInfo': { $ne: newUser._id } };
+					query = { roomId, 'members.userInfo': { $ne: newUser._id } };
 					conditionalUpdate = { $addToSet: { members: { userInfo: new mongoose.Types.ObjectId(newUser._id) } } };
 
 					logger.info('A new user created to be added to the room.');
@@ -44,7 +44,7 @@ export class RoomDbOps {
 		});
 	}
 
-	public static removeUserFromRoom(room_id: string, user: IUser) {
+	public static removeUserFromRoom(roomId: string, user: IUser): Promise<IRoom> {
 		let conditionalUpdate = null;
 		let query = null;
 
@@ -53,7 +53,7 @@ export class RoomDbOps {
 				const existingUser: IUserDocument = await User.findOne({ name: user.name });
 
 				if (existingUser) {
-					query = { room_id, 'members.userInfo': { $eq: existingUser._id } };
+					query = { roomId, 'members.userInfo': { $eq: existingUser._id } };
 					conditionalUpdate = { $pull: { members: { userInfo: existingUser } } };
 
 					logger.info('Found the member to be removed from the room.');

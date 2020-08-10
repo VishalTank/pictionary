@@ -3,7 +3,6 @@ import chalk from 'chalk';
 const level = process.env.LOG_LEVEL;
 
 const logFormat = format.printf(({ level, message, timestamp }) => {
-
 	return `[${chalk.blueBright(timestamp)}] [${level}]: ${message}`;
 });
 
@@ -43,7 +42,7 @@ export const logger: winston.Logger = createLogger({
 });
 
 export const stream = {
-	write: function (message): void {
+	write: function (message: string): void {
 		// eslint-disable-next-line no-control-regex
 		logger.info(message.slice(0, -1).replace(/\u001b\[[0-9]{1,2}m/g, ''));
 	}

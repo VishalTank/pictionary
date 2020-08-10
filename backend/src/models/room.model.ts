@@ -3,7 +3,7 @@ import { Document, Schema, model } from 'mongoose';
 import { IMember } from './member.model';
 
 const roomSchema = new Schema({
-	room_id: {
+	roomId: {
 		type: Schema.Types.String,
 		required: true,
 		unique: true
@@ -22,7 +22,7 @@ const roomSchema = new Schema({
 });
 
 export interface IRoom {
-	room_id: string;
+	roomId: string;
 	members: IMember[];
 }
 

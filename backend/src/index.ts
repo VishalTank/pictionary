@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 import express from 'express';
 import http from 'http';
@@ -29,7 +30,7 @@ class App {
 
 	private initializeHttpServer(): Promise<void> {
 
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			this.httpServer = http.createServer(this.app);
 
 			this.httpServer.listen(AppConfig.server.port, AppConfig.server.host, () => {
@@ -58,7 +59,7 @@ class App {
 
 		return new Promise((resolve, reject) => {
 			const { name, host, port, type } = AppConfig.db;
-			const dbUrl: string = `${type}://${host}:${port}/${name}`;
+			const dbUrl = `${type}://${host}:${port}/${name}`;
 
 			mongoose.connect(dbUrl, {
 				useNewUrlParser: true,

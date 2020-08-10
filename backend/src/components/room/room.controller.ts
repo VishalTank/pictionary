@@ -3,14 +3,14 @@ import { Request, Response } from 'express';
 import Room, { IRoom } from '../../models/room.model';
 import { logger } from './../../services/app.logger';
 import { generateRandomRoomId } from './room.utils';
-import User, { IUser, IUserDocument } from './../../models/user.model';
+import User from './../../models/user.model';
 import { RoomDbOps } from './room.db';
 import { IMember } from './../../models/member.model';
 
 
 export class RoomController {
 
-	public createRoom(req: Request, res: Response) {
+	public createRoom(req: Request, res: Response): void {
 
 		User.findOne({ name: req.body.name })
 			.then(async existingUser => {
@@ -38,7 +38,7 @@ export class RoomController {
 				}
 
 				const roomBody: IRoom = {
-					room_id: generateRandomRoomId(8),
+					roomId: generateRandomRoomId(8),
 					members: [roomAdmin]
 				};
 
@@ -58,10 +58,15 @@ export class RoomController {
 			});
 	}
 
-	public getRoom(req: Request, res: Response) {
+	public getRoom(req: Request, res: Response): void {
 
-		Room.findOne({ room_id: req.params.room_id })
-			.populate('members')
+		Room.findOne({ roomId: req.params.roomId })
+			.populate({
+				path: 'members',
+				populate: {
+					path: 'userInfo'
+				}
+			})
 			.then(room => {
 				if (room) {
 					logger.info('Room fetched successfully: ' + room);
@@ -69,7 +74,7 @@ export class RoomController {
 				}
 				else {
 					logger.error('Can not find room with given Id.');
-					res.status(500).send({ error: 'Can not find room with given room_id.' });
+					res.status(500).send({ error: 'Can not find room with given roomId.' });
 				}
 			})
 			.catch(err => {
@@ -78,9 +83,9 @@ export class RoomController {
 			});
 	}
 
-	public async addUserToRoom(req: Request, res: Response) {
+	public addUserToRoom(req: Request, res: Response): void {
 
-		RoomDbOps.addUserToRoom(req.params.room_id, req.body)
+		RoomDbOps.addUserToRoom(req.params.roomId, req.body)
 			.then(updatedRoom => {
 				logger.info('Updated members in the room successfully: ' + updatedRoom);
 				res.status(200).send(updatedRoom);
