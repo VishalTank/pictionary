@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
 				// Redirect only if username is successfully stored on localstorage
 				this.storage.get(USER).subscribe(userData => {
 					if (userData)
-						this.router.navigate(['/room', response.room_id]);
+						this.router.navigate(['/room', response.roomId]);
 				});
 			}, err => {
 				console.log(err);

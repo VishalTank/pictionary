@@ -12,11 +12,11 @@ export class RoomService {
 
 	constructor(private http: HttpClient) { }
 
-	getRoomDetails(room_id: string): Observable<any> {
-		return this.http.get(API.GET_ROOM + room_id);
+	getRoomDetails(roomId: string): Observable<any> {
+		return this.http.get(API.GET_ROOM + roomId);
 	}
 
-	createUserAndAddToRoom(room_id: string, userObj: IUser): Observable<any> {
-		return this.http.post(API.ADD_USER_TO_ROOM + room_id, userObj);
+	addUserToRoom(roomId: string, userObj: IUser): Observable<any> {
+		return this.http.post(API.ADD_USER_TO_ROOM + roomId, userObj);
 	}
 }

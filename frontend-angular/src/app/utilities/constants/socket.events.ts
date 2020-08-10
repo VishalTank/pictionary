@@ -1,5 +1,5 @@
-export const Info: string = 'info';
-export const Chat: string = 'chat';
-export const JoinRoom: string = 'join-room';
-export const AddMember: string = 'add-member';
-export const RemoveMember: string = 'remove-member';
+export const INFO = 'info';
+export const CHAT = 'chat';
+export const JOIN_ROOM = 'join-room';
+export const ADD_MEMBER = 'add-member';
+export const REMOVE_MEMBER = 'remove-member';

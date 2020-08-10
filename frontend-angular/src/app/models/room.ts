@@ -1,6 +1,6 @@
-import { IUser } from './user';
+import { IMember } from './member';
 
 export interface IRoom {
-	room_id: string;
-	members: IUser[];
+	roomId: string;
+	members: IMember[];
 }

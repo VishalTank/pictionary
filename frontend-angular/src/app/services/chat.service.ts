@@ -4,9 +4,10 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { IMessage } from './../models/message';
-import { Info, Chat, JoinRoom, RemoveMember } from './../utilities/constants/socket.events';
+import { INFO, CHAT, JOIN_ROOM, ADD_MEMBER, REMOVE_MEMBER } from './../utilities/constants/socket.events';
 import { IRoom } from '../models/room';
 import { IUser } from './../models/user';
+import { promise } from 'protractor';
 
 @Injectable({
 	providedIn: 'root'
@@ -19,25 +20,38 @@ export class ChatService {
 	constructor() {
 	}
 
-	connectToRoom(user: IUser, room_id: string): void {
-		const stringifiedUser: string = JSON.stringify(user);
+	connectToChatServer(user: IUser, roomId: string): Promise<string> {
 
-		this.socket = io(environment.SOCKET_ENDPOINT, { query: `user=${stringifiedUser}&room_id=${room_id}` });
-		this.socket.emit(JoinRoom, room_id);
+		return new Promise((resolve, reject) => {
+			const stringifiedUser: string = JSON.stringify(user);
+
+			this.socket = io(environment.SOCKET_ENDPOINT, { query: `user=${stringifiedUser}&roomId=${roomId}` });
+
+			if (this.socket) {
+				return resolve(roomId);
+			}
+			else {
+				return reject(new Error('Can not connect to Chat Server'));
+			}
+		});
+	}
+
+	joinRoom(roomId): void {
+		this.socket.emit(JOIN_ROOM, roomId);
 	}
 
 	sendChatMessage(message: IMessage): void {
-		this.socket.emit(Chat, message);
+		this.socket.emit(CHAT, message);
 	}
 
 	getMessages(): Observable<any> {
 
 		return Observable.create(observer => {
-			this.socket.on(Chat, (message: IMessage) => {
+			this.socket.on(CHAT, (message: IMessage) => {
 				observer.next(message);
 			});
 
-			this.socket.on(Info, (message: IMessage) => {
+			this.socket.on(INFO, (message: IMessage) => {
 				observer.next(message);
 			});
 		});
@@ -46,15 +60,13 @@ export class ChatService {
 	getMembers(): Observable<any> {
 
 		return Observable.create(observer => {
-			if (this.socket) {
-				console.log('asdasdasdasd');
-				this.socket.on(RemoveMember, (updatedRoom: IRoom) => {
-					observer.next(updatedRoom.members);
-				});
-			}
-			else {
-				console.log('socket not created');
-			}
+			this.socket.on(ADD_MEMBER, (updatedRoom: IRoom) => {
+				observer.next(updatedRoom.members);
+			});
+
+			this.socket.on(REMOVE_MEMBER, (updatedRoom: IRoom) => {
+				observer.next(updatedRoom.members);
+			});
 		})
 	}
 }

@@ -15,7 +15,7 @@ import { IRoom } from './../../models/room';
 })
 export class RoomComponent implements OnInit {
 
-	room_id: string;
+	roomId: string;
 	roomData: IRoom;
 	showLoading: boolean = false;
 
@@ -32,8 +32,8 @@ export class RoomComponent implements OnInit {
 		this.showLoading = true;
 
 		this.route.params.subscribe(params => {
-			this.room_id = params['id'];
-			this.getRoomDetails(this.room_id);
+			this.roomId = params['id'];
+			this.getRoomDetails(this.roomId);
 
 			// Open name form if localstorage does not contain username
 			this.storage.get(USER).subscribe(userData => {
@@ -43,8 +43,8 @@ export class RoomComponent implements OnInit {
 		});
 	}
 
-	private getRoomDetails(room_id: string): void {
-		this.roomService.getRoomDetails(room_id)
+	private getRoomDetails(roomId: string): void {
+		this.roomService.getRoomDetails(roomId)
 			.subscribe(roomData => {
 				this.showLoading = false;
 				this.roomData = roomData;
@@ -54,7 +54,7 @@ export class RoomComponent implements OnInit {
 
 	private openNameInputModal(): void {
 		const modelRef = this.modalService.open(NameInputModalComponent, { keyboard: false, backdrop: 'static' });
-		modelRef.componentInstance.room_id = this.room_id;
+		modelRef.componentInstance.roomId = this.roomId;
 	}
 
 	private preventReload(): void {

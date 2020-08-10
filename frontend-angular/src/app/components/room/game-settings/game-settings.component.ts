@@ -10,7 +10,7 @@ import { UI } from './../../../utilities/constants/ui.constants';
 })
 export class GameSettingsComponent implements OnInit {
 
-	@Input() room_id: string;
+	@Input() roomId: string;
 	roomLink: string = null;
 	copyButtonBorder: string = 'secondary';
 
@@ -19,7 +19,7 @@ export class GameSettingsComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-		this.roomLink = UI.ROOM + this.room_id;
+		this.roomLink = UI.ROOM + this.roomId;
 	}
 
 	copyToClipboard(inputElement): void {

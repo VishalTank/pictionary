@@ -3,9 +3,9 @@ import { StorageMap } from '@ngx-pwa/local-storage';
 
 import { ChatService } from './../../../services/chat.service';
 import { IMessage } from '../../../models/message';
-import { Info } from './../../../utilities/constants/socket.events';
+import { INFO } from './../../../utilities/constants/socket.events';
 import { IRoom } from './../../../models/room';
-import { USER } from 'src/app/utilities/constants/localstorage.constants';
+import { USER } from '../../../utilities/constants/localstorage.constants';
 import { IUser } from './../../../models/user';
 
 @Component({
@@ -18,7 +18,7 @@ export class GameChatComponent implements OnInit {
 	@Input() roomData: IRoom;
 	msg: string = '';
 	messages: IMessage[] = [];
-	Info: string = Info;
+	Info: string = INFO;
 	user: IUser;
 
 	constructor(
@@ -32,7 +32,13 @@ export class GameChatComponent implements OnInit {
 			if (userData) {
 				this.user = userData as IUser;
 
-				this.chatService.connectToRoom(this.user, this.roomData.room_id);
+				this.chatService.connectToChatServer(this.user, this.roomData.roomId)
+					.then(roomId => {
+						this.chatService.joinRoom(roomId);
+					})
+					.catch(err => {
+						console.error('Error while connecting to Chat Server:', err);
+					});
 
 				this.chatService.getMessages().subscribe((message: IMessage) => {
 					this.messages.push(message);

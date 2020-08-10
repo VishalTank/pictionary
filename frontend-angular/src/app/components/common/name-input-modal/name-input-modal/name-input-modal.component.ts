@@ -15,7 +15,7 @@ import { USER } from './../../../../utilities/constants/localstorage.constants';
 })
 export class NameInputModalComponent {
 
-	@Input() room_id: string;
+	@Input() roomId: string;
 	showLoading: boolean = false;
 	nameInputForm: FormGroup;
 
@@ -40,7 +40,7 @@ export class NameInputModalComponent {
 			name: this.nameInputForm.controls.name.value
 		};
 
-		this.roomService.createUserAndAddToRoom(this.room_id, user)
+		this.roomService.addUserToRoom(this.roomId, user)
 			.subscribe(() => {
 				this.showLoading = false;
 
