@@ -1,0 +1,17 @@
+<div class="modal-header">
+	<h4 class="modal-title">Pictionary</h4>
+</div>
+<div class="modal-body">
+	<form [formGroup]="nameInputForm" (submit)="submitForm()">
+		<label for="nameInput">Nick Name:</label>
+		<input class="form-control" formControlName="name" type="text" required>
+	</form>
+</div>
+<div class="modal-footer">
+	<div *ngIf="showLoading" class="spinner-grow text-primary spinner-grow-sm" role="status">
+		<span class="sr-only">Loading...</span>
+	</div>
+	<button class="btn btn-primary" [disabled]="nameInputForm.invalid" (click)="submitForm()">
+		Go To Room
+	</button>
+</div>

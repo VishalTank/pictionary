@@ -1,0 +1,32 @@
+<div class="container px-0 py-5">
+	<div class="card m-auto room">
+		<div class="card-header text-center">
+			ROOM
+		</div>
+		<div class="card-body row m-0 p-0">
+			<div class="d-flex col-md-2 border">
+				<div *ngIf="roomData; else membersLoading;">
+					<app-members [roomData]="roomData"></app-members>
+				</div>
+				<ng-template #membersLoading>
+					<div class="d-flex m-auto spinner-grow spinner-grow-md text-primary" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</ng-template>
+			</div>
+			<div class="col-md-7 border">
+				<app-game-settings [roomId]="roomId"></app-game-settings>
+			</div>
+			<div class="d-flex col-md-3 border">
+				<div *ngIf="roomData; else gameChatLoading;">
+					<app-game-chat [roomData]="roomData"></app-game-chat>
+				</div>
+				<ng-template #gameChatLoading>
+					<div class="d-flex m-auto spinner-grow spinner-grow-md text-primary" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</ng-template>
+			</div>
+		</div>
+	</div>
+</div>

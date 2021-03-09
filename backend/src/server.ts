@@ -16,7 +16,7 @@ class Server {
 
 	private configureApp(): void {
 		applyMiddlewares(this.app);
-		this.app.use('/server', routes);
+		this.app.use('/api', routes);
 	}
 }
 

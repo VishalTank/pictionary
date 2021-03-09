@@ -1,0 +1,35 @@
+<div class="container py-5">
+	<div class="row d-flex">
+		<div class="col-12">
+			<div class="row">
+				<div class="col-6 mx-auto">
+					<div class="card rounded-0">
+						<div class="card-header">
+							<h3 class="mb-0 text-center">Pictionary</h3>
+						</div>
+						<div class="card-body">
+							<form class="col justify-content-between" [formGroup]="registerForm"
+								(ngSubmit)="submitForm()">
+								<div class="row form-group">
+									<label for="name">Nick Name:</label>
+									<input class="form-control" type="text" id="name" aria-describedby="name"
+										placeholder="Enter Nick Name" formControlName="name" required>
+								</div>
+								<div class="row justify-content-center">
+									<button type="submit" class="col-4 btn btn-primary m-3"
+										[disabled]="registerForm.invalid">
+										<span *ngIf="showLoading" class="spinner-grow spinner-grow-sm m-1"></span>
+										Create Room
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>
