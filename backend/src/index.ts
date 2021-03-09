@@ -34,7 +34,7 @@ class App {
 			this.httpServer = http.createServer(this.app);
 
 			this.httpServer.listen(AppConfig.server.port, AppConfig.server.host, () => {
-				logger.info(`HTTP Server started listening on: ${AppConfig.server.port}`);
+				logger.info(`HTTP Server started listening on port: ${AppConfig.server.port}`);
 				resolve();
 			});
 		});
@@ -45,7 +45,7 @@ class App {
 		return new Promise((resolve, reject) => {
 			new SocketHandler().createServer(this.httpServer)
 				.then(() => {
-					logger.info('Socket server started successfully');
+					logger.info('Socket Server started successfully');
 					resolve();
 				})
 				.catch(err => {

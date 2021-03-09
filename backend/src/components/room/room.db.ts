@@ -29,6 +29,12 @@ export class RoomDbOps {
 				}
 
 				Room.findOneAndUpdate(query, conditionalUpdate, { new: true })
+					.populate({
+						path: 'members',
+						populate: {
+							path: 'userInfo'
+						}
+					})
 					.then(updatedRoom => {
 						logger.info(`updatedRoom after adding a user to it: ${updatedRoom}`);
 						resolve(updatedRoom);
@@ -66,6 +72,13 @@ export class RoomDbOps {
 				}
 
 				Room.findOneAndUpdate(query, conditionalUpdate, { new: true })
+					.populate({
+						path: 'members',
+						populate: {
+							path: 'userInfo'
+						}
+					})
+					.exec()
 					.then(updatedRoom => {
 						logger.info(`updatedRoom after removing a user from it: ${updatedRoom}`);
 						resolve(updatedRoom);

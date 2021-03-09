@@ -37,19 +37,16 @@ export class SocketHandler {
 			if (this.user) {
 				// When a user wants to join a room
 				socket.on(JOIN_ROOM, (roomId: string) => {
-					console.log('JOINNNNNNNNNNNNN');
 					this.addUserToRoom(socket, roomId)
 				});
 
 				// Chat messages
 				socket.on(CHAT, (message: IMessage) => {
-					console.log('CHATTTTTTTTT');
 					this.handleChatMessages(socket.handshake.query.roomId, message)
 				});
 
 				// When a user disconnects
 				socket.on(DISCONNECT, () => {
-					console.log('DISCONNECTTTTTTTTT');
 					this.handleUserLeft(socket, socket.handshake.query.roomId)
 				});
 			}
